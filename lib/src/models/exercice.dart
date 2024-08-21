@@ -16,11 +16,15 @@ class Exercice {
       'id': id,
       'name': name,
       'calories': calories,
-      'consumedAt': executedAt.toIso8601String(),
+      'executedAt': executedAt.toIso8601String(),
     };
   }
 
   factory Exercice.fromMap(Map<String, dynamic> map) {
+    if (map['id'] == null || map['name'] == null || map['calories'] == null || map['executedAt'] == null) {
+      throw ArgumentError('Missing required fields in the map');
+    }
+
     return Exercice(
       id: map['id'],
       name: map['name'],

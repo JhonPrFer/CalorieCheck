@@ -74,6 +74,7 @@ class ExerciceListItem extends ConsumerWidget {
                     style: const TextStyle(
                       fontSize: 14,
                       color: Colors.black,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ],
@@ -83,7 +84,7 @@ class ExerciceListItem extends ConsumerWidget {
                 style: const TextStyle(
                   fontSize: 16,
                   color: Color.fromARGB(255, 233, 30, 23),
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),

@@ -21,6 +21,10 @@ class Food {
   }
 
   factory Food.fromMap(Map<String, dynamic> map) {
+    if (map['id'] == null || map['name'] == null || map['calories'] == null || map['consumedAt'] == null) {
+      throw ArgumentError('Missing required fields in the map');
+    }
+
     return Food(
       id: map['id'],
       name: map['name'],

@@ -71,45 +71,51 @@ class ExerciceScreen extends ConsumerWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Adicionar Exercício'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Nome'),
-              ),
-              TextField(
-                controller: _caloriesController,
-                decoration: const InputDecoration(labelText: 'Calorias Perdidas'),
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 16),
-              Row(
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.calendar_today),
-                  const SizedBox(width: 8),
-                  Text(
-                    DateFormat('dd/MM/yyyy').format(selectedDate),
-                    style: const TextStyle(fontSize: 16),
+                  TextField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(labelText: 'Nome'),
                   ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.edit_calendar, color: Colors.blue),
-                    onPressed: () async {
-                      final pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: selectedDate,
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime.now(),
-                      );
-                      if (pickedDate != null) {
-                        selectedDate = pickedDate;
-                      }
-                    },
+                  TextField(
+                    controller: _caloriesController,
+                    decoration: const InputDecoration(labelText: 'Calorias Perdidas'),
+                    keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      const Icon(Icons.calendar_today),
+                      const SizedBox(width: 8),
+                      Text(
+                        DateFormat('dd/MM/yyyy').format(selectedDate),
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(Icons.edit_calendar, color: Colors.blue),
+                        onPressed: () async {
+                          final pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: selectedDate,
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime.now(),
+                          );
+                          if (pickedDate != null) {
+                            setState(() {
+                              selectedDate = pickedDate;
+                            });
+                          }
+                        },
+                      ),
+                    ],
                   ),
                 ],
-              ),
-            ],
+              );
+            },
           ),
           actions: [
             TextButton(

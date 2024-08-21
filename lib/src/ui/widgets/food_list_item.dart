@@ -84,6 +84,7 @@ class FoodListItem extends ConsumerWidget {
                 style: const TextStyle(
                   fontSize: 16,
                   color: Color(0xFF4CAF50),
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
