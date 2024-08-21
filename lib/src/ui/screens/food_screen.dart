@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../models/food.dart';
 import '../../providers/food_provider.dart';
 import '../widgets/food_list_item.dart';
+import '../widgets/calories_displayer.dart';
 
 class FoodScreen extends ConsumerWidget {
   const FoodScreen({super.key});
@@ -40,46 +41,12 @@ class FoodScreen extends ConsumerWidget {
           children: [
             // Exibe as calorias consumidas no centro da tela
             Center(
-              child: Column(
-                children: [
-                  const Text(
-                    'Hoje',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                      shadows: [
-                        Shadow(
-                          offset: Offset(1.4, 1.4),
-                          blurRadius: 3.0,
-                          color: Colors.grey,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '+$totalCalories kcal',
-                    style: const TextStyle(
-                      fontSize: 34,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF4CAF50),
-                      shadows: [
-                        Shadow(
-                          offset: Offset(1.4, 1.4),
-                          blurRadius: 3.0,
-                          color: Colors.black26,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              child: CaloriesDisplay(totalCalories: totalCalories, type: 'GAINED'),
             ),
             const SizedBox(height: 20),
             Expanded(
               child: foods.isEmpty
-                  ? const Center(child: Text('Nenhum alimento adicionado hoje.'))
+                  ? const Center(child: Text('Nenhum alimento adicionado.'))
                   : ListView.builder(
                       itemCount: foods.length,
                       itemBuilder: (context, index) {

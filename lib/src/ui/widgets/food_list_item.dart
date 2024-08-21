@@ -11,58 +11,117 @@ class FoodListItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: ListTile(
-        title: Text(
-          food.name,
-          style: const TextStyle(fontSize: 18),
-        ),
-        subtitle: RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                text: '${food.calories} kcal',
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0), // Espaçamento entre os cards
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8.0), // Bordas arredondadas
+        child: Dismissible(
+          key: Key(food.id.toString()),
+          background: _buildDismissBackground(
+            context,
+            color: Colors.blue,
+            icon: Icons.edit,
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.only(left: 20.0),
+          ),
+          secondaryBackground: _buildDismissBackground(
+            context,
+            color: Colors.red,
+            icon: Icons.delete,
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 20.0),
+          ),
+          confirmDismiss: (direction) async {
+            if (direction == DismissDirection.endToStart) {
+              final shouldDelete = await _confirmDeletion(context);
+              return shouldDelete ?? false;
+            } else if (direction == DismissDirection.startToEnd) {
+              final updatedFood = await _showEditFoodDialog(context, food);
+              if (updatedFood != null) {
+                ref.read(foodProvider.notifier).removeFood(food.id);
+                ref.read(foodProvider.notifier).addFood(updatedFood);
+              }
+              return false;
+            }
+            return false;
+          },
+          onDismissed: (direction) {
+            if (direction == DismissDirection.endToStart) {
+              ref.read(foodProvider.notifier).removeFood(food.id);
+            }
+          },
+          child: Card(
+            margin: EdgeInsets.zero, // Mantém o card sem margens internas
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              title: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      food.name,
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                  ),
+                  Text(
+                    DateFormat('dd/MM/yyyy').format(food.consumedAt),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF4CAF50),
+                    ),
+                  ),
+                ],
+              ),
+              subtitle: Text(
+                '${food.calories} kcal',
                 style: const TextStyle(
                   fontSize: 16,
-                  color: Colors.black, // Cor do primeiro texto (calorias)
+                  color: Colors.black,
                 ),
               ),
-              const TextSpan(
-                  text: ' ', // Espaço entre as informações
-                  style: TextStyle(color: Colors.black)),
-              TextSpan(
-                text: DateFormat('dd/MM/yyyy').format(food.consumedAt),
-                style: const TextStyle(
-                  fontSize: 12, // Tamanho menor para a data
-                  color: Color(0xFF4CAF50), // Cor verde para a data
-                ),
-              ),
-            ],
+            ),
           ),
         ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.edit, color: Colors.blue),
-              onPressed: () async {
-                final updatedFood = await _showEditFoodDialog(context, food);
-                if (updatedFood != null) {
-                  ref.read(foodProvider.notifier).removeFood(food.id);
-                  ref.read(foodProvider.notifier).addFood(updatedFood);
-                }
-              },
+      ),
+    );
+  }
+
+  Widget _buildDismissBackground(BuildContext context,
+      {required Color color, required IconData icon, required Alignment alignment, required EdgeInsets padding}) {
+    return Container(
+      color: color,
+      alignment: alignment,
+      padding: padding,
+      child: Icon(icon, color: Colors.white),
+    );
+  }
+
+  Future<bool?> _confirmDeletion(BuildContext context) async {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Confirmar Exclusão'),
+          content: const Text('Deseja realmente excluir este alimento?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancelar'),
             ),
-            IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
-              onPressed: () {
-                ref.read(foodProvider.notifier).removeFood(food.id);
-              },
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Excluir'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 

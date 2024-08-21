@@ -13,14 +13,18 @@ class FoodNotifier extends StateNotifier<List<Food>> {
   void _loadFoods() async {
     final prefs = await SharedPreferences.getInstance();
     final foodString = prefs.getString('foods');
+
     if (foodString != null) {
       final List<dynamic> foodList = jsonDecode(foodString);
-      state = foodList.map((item) => Food.fromMap(item)).toList();
+      state = foodList.map((item) => Food.fromMap(item)).toList()..sort((a, b) => b.consumedAt.compareTo(a.consumedAt));
     }
   }
 
   void addFood(Food food) async {
-    state = [...state, food];
+    state = [
+      food,
+      ...state,
+    ]..sort((a, b) => b.consumedAt.compareTo(a.consumedAt));
     await _saveFoods();
   }
 
