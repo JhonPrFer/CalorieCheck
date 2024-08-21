@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../../models/food.dart';
-import '../../providers/food_provider.dart';
+import '../../models/exercice.dart';
+import '../../providers/exercice_provider.dart';
 
-class FoodListItem extends ConsumerWidget {
-  final Food food;
+class ExerciceListItem extends ConsumerWidget {
+  final Exercice exercice;
 
-  const FoodListItem({super.key, required this.food});
+  const ExerciceListItem({super.key, required this.exercice});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -16,7 +16,7 @@ class FoodListItem extends ConsumerWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.0), // Bordas arredondadas
         child: Dismissible(
-          key: Key(food.id.toString()),
+          key: Key(exercice.id.toString()),
           background: _buildDismissBackground(
             context,
             color: Colors.blue,
@@ -36,10 +36,10 @@ class FoodListItem extends ConsumerWidget {
               final shouldDelete = await _confirmDeletion(context);
               return shouldDelete ?? false;
             } else if (direction == DismissDirection.startToEnd) {
-              final updatedFood = await _showEditFoodDialog(context, food);
-              if (updatedFood != null) {
-                ref.read(foodProvider.notifier).removeFood(food.id);
-                ref.read(foodProvider.notifier).addFood(updatedFood);
+              final updatedExercice = await _showEditExerciceDialog(context, exercice);
+              if (updatedExercice != null) {
+                ref.read(exerciceProvider.notifier).removeExercice(exercice.id);
+                ref.read(exerciceProvider.notifier).addExercice(updatedExercice);
               }
               return false;
             }
@@ -47,7 +47,7 @@ class FoodListItem extends ConsumerWidget {
           },
           onDismissed: (direction) {
             if (direction == DismissDirection.endToStart) {
-              ref.read(foodProvider.notifier).removeFood(food.id);
+              ref.read(exerciceProvider.notifier).removeExercice(exercice.id);
             }
           },
           child: Card(
@@ -62,7 +62,7 @@ class FoodListItem extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      food.name,
+                      exercice.name,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -70,20 +70,20 @@ class FoodListItem extends ConsumerWidget {
                     ),
                   ),
                   Text(
-                    DateFormat('dd/MM/yyyy').format(food.consumedAt),
+                    DateFormat('dd/MM/yyyy').format(exercice.executedAt),
                     style: const TextStyle(
                       fontSize: 14,
                       color: Colors.black,
-                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ],
               ),
               subtitle: Text(
-                '+${food.calories} kcal',
+                '-${exercice.calories} kcal',
                 style: const TextStyle(
                   fontSize: 16,
-                  color: Color(0xFF4CAF50),
+                  color: Color.fromARGB(255, 233, 30, 23),
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
@@ -109,7 +109,7 @@ class FoodListItem extends ConsumerWidget {
       builder: (context) {
         return AlertDialog(
           title: const Text('Confirmar Exclusão'),
-          content: const Text('Deseja realmente excluir este alimento?'),
+          content: const Text('Deseja realmente excluir este exercício?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
@@ -129,16 +129,16 @@ class FoodListItem extends ConsumerWidget {
     );
   }
 
-  Future<Food?> _showEditFoodDialog(BuildContext context, Food food) async {
-    final _nameController = TextEditingController(text: food.name);
-    final _caloriesController = TextEditingController(text: food.calories.toString());
-    DateTime? selectedDate = food.consumedAt;
+  Future<Exercice?> _showEditExerciceDialog(BuildContext context, Exercice exercice) async {
+    final _nameController = TextEditingController(text: exercice.name);
+    final _caloriesController = TextEditingController(text: exercice.calories.toString());
+    DateTime? selectedDate = exercice.executedAt;
 
-    return showDialog<Food>(
+    return showDialog<Exercice>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Editar Alimento'),
+          title: const Text('Editar Exercício'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -191,13 +191,13 @@ class FoodListItem extends ConsumerWidget {
                 foregroundColor: const Color(0xFFFFFFFF),
               ),
               onPressed: () {
-                final updatedFood = Food(
-                  id: food.id,
+                final updatedExercice = Exercice(
+                  id: exercice.id,
                   name: _nameController.text,
                   calories: int.tryParse(_caloriesController.text) ?? 0,
-                  consumedAt: selectedDate ?? DateTime.now(),
+                  executedAt: selectedDate ?? DateTime.now(),
                 );
-                Navigator.of(context).pop(updatedFood);
+                Navigator.of(context).pop(updatedExercice);
               },
               child: const Text('Salvar'),
             ),

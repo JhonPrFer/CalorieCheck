@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../../models/food.dart';
-import '../../providers/food_provider.dart';
-import '../widgets/food_list_item.dart';
+import '../../models/exercice.dart';
+import '../../providers/exercice_provider.dart';
+import '../widgets/exercice_list_item.dart';
 import '../widgets/calories_displayer.dart';
 import '../../enums/result_type_enum.dart';
 
-class FoodScreen extends ConsumerWidget {
-  const FoodScreen({super.key});
+class ExerciceScreen extends ConsumerWidget {
+  const ExerciceScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final foods = ref.watch(foodProvider);
-    final totalCalories = ref.read(foodProvider.notifier).getTodayCalories();
+    final exercices = ref.watch(exerciceProvider);
+    final totalCalories = ref.read(exerciceProvider.notifier).getTodayCalories();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Alimentos',
+          'Exercícios',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Colors.white),
         ),
         backgroundColor: const Color(0xFF4CAF50),
@@ -27,9 +27,9 @@ class FoodScreen extends ConsumerWidget {
             icon: const Icon(Icons.add),
             color: Colors.white,
             onPressed: () async {
-              final newFood = await _showAddFoodDialog(context);
-              if (newFood != null) {
-                ref.read(foodProvider.notifier).addFood(newFood);
+              final newExercice = await _showAddExerciceDialog(context);
+              if (newExercice != null) {
+                ref.read(exerciceProvider.notifier).addExercice(newExercice);
               }
             },
           ),
@@ -42,16 +42,16 @@ class FoodScreen extends ConsumerWidget {
           children: [
             // Exibe as calorias consumidas no centro da tela
             Center(
-              child: CaloriesDisplay(totalCalories: totalCalories, type: ResultTypeEnum.gain),
+              child: CaloriesDisplay(totalCalories: totalCalories, type: ResultTypeEnum.loss),
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: foods.isEmpty
-                  ? const Center(child: Text('Nenhum alimento adicionado.'))
+              child: exercices.isEmpty
+                  ? const Center(child: Text('Nenhum exercício adicionado.'))
                   : ListView.builder(
-                      itemCount: foods.length,
+                      itemCount: exercices.length,
                       itemBuilder: (context, index) {
-                        return FoodListItem(food: foods[index]);
+                        return ExerciceListItem(exercice: exercices[index]);
                       },
                     ),
             ),
@@ -61,16 +61,16 @@ class FoodScreen extends ConsumerWidget {
     );
   }
 
-  Future<Food?> _showAddFoodDialog(BuildContext context) async {
+  Future<Exercice?> _showAddExerciceDialog(BuildContext context) async {
     final _nameController = TextEditingController();
     final _caloriesController = TextEditingController();
     DateTime selectedDate = DateTime.now();
 
-    return showDialog<Food>(
+    return showDialog<Exercice>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Adicionar Alimento'),
+          title: const Text('Adicionar Exercício'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -80,7 +80,7 @@ class FoodScreen extends ConsumerWidget {
               ),
               TextField(
                 controller: _caloriesController,
-                decoration: const InputDecoration(labelText: 'Calorias Ganhas'),
+                decoration: const InputDecoration(labelText: 'Calorias Perdidas'),
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 16),
@@ -127,13 +127,13 @@ class FoodScreen extends ConsumerWidget {
                 final id = DateTime.now().millisecondsSinceEpoch;
                 final name = _nameController.text;
                 final calories = int.tryParse(_caloriesController.text) ?? 0;
-                final food = Food(
+                final exercice = Exercice(
                   id: id,
                   name: name,
                   calories: calories,
-                  consumedAt: selectedDate,
+                  executedAt: selectedDate,
                 );
-                Navigator.of(context).pop(food);
+                Navigator.of(context).pop(exercice);
               },
               child: const Text('Adicionar'),
             ),

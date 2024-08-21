@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'food_screen.dart';
 import '../../providers/bottom_nav_provider.dart'; // Importação do StateNotifier
+import 'food_screen.dart';
+import 'exercice_screen.dart';
 
 class MainScreen extends ConsumerWidget {
   const MainScreen({super.key});
@@ -17,7 +18,7 @@ class MainScreen extends ConsumerWidget {
         content = const FoodScreen();
         break;
       case 1:
-        content = const Center(child: Text('Exercícios'));
+        content = const ExerciceScreen();
         break;
       case 2:
         content = const Center(child: Text('Metas'));

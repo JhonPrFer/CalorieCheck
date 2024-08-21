@@ -1,0 +1,1 @@
+enum ResultTypeEnum { gain, loss }
