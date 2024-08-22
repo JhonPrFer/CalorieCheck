@@ -4,6 +4,7 @@ import '../../providers/bottom_nav_provider.dart'; // Importação do StateNotif
 import 'food_screen.dart';
 import 'exercice_screen.dart';
 import 'goal_screen.dart';
+import 'report_screen.dart';
 
 class MainScreen extends ConsumerWidget {
   const MainScreen({super.key});
@@ -25,7 +26,7 @@ class MainScreen extends ConsumerWidget {
         content = const GoalScreen();
         break;
       case 3:
-        content = const Center(child: Text('Relatórios'));
+        content = const ReportScreen();
         break;
       default:
         content = const Center(child: Text('Tela não encontrada'));
