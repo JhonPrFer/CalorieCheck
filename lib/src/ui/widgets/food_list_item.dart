@@ -48,6 +48,7 @@ class FoodListItem extends ConsumerWidget {
           onDismissed: (direction) {
             if (direction == DismissDirection.endToStart) {
               ref.read(foodProvider.notifier).removeFood(food.id);
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Alimento excluído')));
             }
           },
           child: Card(

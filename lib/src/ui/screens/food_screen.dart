@@ -40,7 +40,6 @@ class FoodScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Exibe as calorias consumidas no centro da tela
             Center(
               child: CaloriesDisplay(totalCalories: totalCalories, type: ResultTypeEnum.gain),
             ),
