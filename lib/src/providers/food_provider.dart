@@ -28,6 +28,12 @@ class FoodNotifier extends StateNotifier<List<Food>> {
     await _saveFoods();
   }
 
+  Future<void> editFood(Food editedFood) async {
+    state = state.map((food) => food.id == editedFood.id ? editedFood : food).toList()
+      ..sort((a, b) => b.consumedAt.compareTo(a.consumedAt));
+    await _saveFoods();
+  }
+
   void removeFood(int id) async {
     state = state.where((food) => food.id != id).toList();
     await _saveFoods();

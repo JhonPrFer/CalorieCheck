@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../models/food.dart';
 import '../../providers/food_provider.dart';
+import '../widgets/forms/food_form_item.dart';
 
 class FoodListItem extends ConsumerWidget {
   final Food food;
@@ -36,12 +37,7 @@ class FoodListItem extends ConsumerWidget {
               final shouldDelete = await _confirmDeletion(context);
               return shouldDelete ?? false;
             } else if (direction == DismissDirection.startToEnd) {
-              final updatedFood = await _showEditFoodDialog(context, food);
-              if (updatedFood != null) {
-                ref.read(foodProvider.notifier).removeFood(food.id);
-                ref.read(foodProvider.notifier).addFood(updatedFood);
-              }
-              return false;
+              showFoodDialog(context, ref, food: food);
             }
             return false;
           },
