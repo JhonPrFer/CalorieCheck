@@ -78,9 +78,11 @@ class GoalListItem extends ConsumerWidget {
                     ),
                     Text(
                       '${goal.reached}/${goal.target} kcal',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
-                        color: Color(0xFF4CAF50),
+                        color: goal.achieved ?? false
+                            ? Color.fromARGB(255, 76, 175, 80)
+                            : Color.fromARGB(255, 233, 30, 23),
                         fontWeight: FontWeight.w700,
                       ),
                     ),
