@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../enums/result_type_enum.dart';
+import '../../../enums/result_type_enum.dart';
 
 class CaloriesDisplay extends StatelessWidget {
   final int totalCalories;

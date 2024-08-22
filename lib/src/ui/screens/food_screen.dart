@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/food_provider.dart';
 import '../widgets/lists/food_list_item.dart';
-import '../widgets/calories_displayer.dart';
+import '../widgets/displayers/calories_displayer.dart';
 import '../../enums/result_type_enum.dart';
 import '../widgets/forms/food_form_item.dart';
 
