@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../../models/goal.dart';
-import '../../enums/goal_type_enum.dart';
-import '../../providers/goal_provider.dart';
-import '../widgets/forms/goal_form_item.dart'; // Certifique-se de importar o GoalDialog
+import '../../../models/goal.dart';
+import '../../../enums/goal_type_enum.dart';
+import '../../../providers/goal_provider.dart';
+import '../forms/goal_form_item.dart'; // Certifique-se de importar o GoalDialog
 
 class GoalListItem extends ConsumerWidget {
   final Goal goal;
@@ -45,6 +45,7 @@ class GoalListItem extends ConsumerWidget {
           onDismissed: (direction) {
             if (direction == DismissDirection.endToStart) {
               ref.read(goalProvider.notifier).removeGoal(goal.id);
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Meta excluída.')));
             }
           },
           child: Container(
@@ -76,7 +77,7 @@ class GoalListItem extends ConsumerWidget {
                       ),
                     ),
                     Text(
-                      '${goal.target} kcal',
+                      '${goal.reached}/${goal.target} kcal',
                       style: const TextStyle(
                         fontSize: 16,
                         color: Color(0xFF4CAF50),

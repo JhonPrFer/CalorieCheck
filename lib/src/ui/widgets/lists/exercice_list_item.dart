@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../../models/food.dart';
-import '../../providers/food_provider.dart';
-import '../widgets/forms/food_form_item.dart';
+import '../../../models/exercice.dart';
+import '../../../providers/exercice_provider.dart';
+import '../forms/exercice_form_item.dart';
 
-class FoodListItem extends ConsumerWidget {
-  final Food food;
+class ExerciceListItem extends ConsumerWidget {
+  final Exercice exercice;
 
-  const FoodListItem({super.key, required this.food});
+  const ExerciceListItem({super.key, required this.exercice});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,7 +17,7 @@ class FoodListItem extends ConsumerWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.0), // Bordas arredondadas
         child: Dismissible(
-          key: Key(food.id.toString()),
+          key: Key(exercice.id.toString()),
           background: _buildDismissBackground(
             context,
             color: Colors.blue,
@@ -37,14 +37,14 @@ class FoodListItem extends ConsumerWidget {
               final shouldDelete = await _confirmDeletion(context);
               return shouldDelete ?? false;
             } else if (direction == DismissDirection.startToEnd) {
-              showFoodDialog(context, ref, food: food);
+              showExerciceDialog(context, ref, exercice: exercice);
             }
             return false;
           },
           onDismissed: (direction) {
             if (direction == DismissDirection.endToStart) {
-              ref.read(foodProvider.notifier).removeFood(food.id);
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Alimento excluído')));
+              ref.read(exerciceProvider.notifier).removeExercice(exercice.id);
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Exercício excluído.')));
             }
           },
           child: Card(
@@ -59,7 +59,7 @@ class FoodListItem extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      food.name,
+                      exercice.name,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -67,7 +67,7 @@ class FoodListItem extends ConsumerWidget {
                     ),
                   ),
                   Text(
-                    DateFormat('dd/MM/yyyy').format(food.consumedAt),
+                    DateFormat('dd/MM/yyyy').format(exercice.executedAt),
                     style: const TextStyle(
                       fontSize: 14,
                       color: Colors.black,
@@ -77,10 +77,10 @@ class FoodListItem extends ConsumerWidget {
                 ],
               ),
               subtitle: Text(
-                '+${food.calories} kcal',
+                '-${exercice.calories} kcal',
                 style: const TextStyle(
                   fontSize: 16,
-                  color: Color(0xFF4CAF50),
+                  color: Color.fromARGB(255, 233, 30, 23),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -107,7 +107,7 @@ class FoodListItem extends ConsumerWidget {
       builder: (context) {
         return AlertDialog(
           title: const Text('Confirmar Exclusão'),
-          content: const Text('Deseja realmente excluir este alimento?'),
+          content: const Text('Deseja realmente excluir este exercício?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
@@ -120,84 +120,6 @@ class FoodListItem extends ConsumerWidget {
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<Food?> _showEditFoodDialog(BuildContext context, Food food) async {
-    final _nameController = TextEditingController(text: food.name);
-    final _caloriesController = TextEditingController(text: food.calories.toString());
-    DateTime? selectedDate = food.consumedAt;
-
-    return showDialog<Food>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Editar Alimento'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Nome'),
-              ),
-              TextField(
-                controller: _caloriesController,
-                decoration: const InputDecoration(labelText: 'Calorias Ganhas'),
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  const Icon(Icons.calendar_today),
-                  const SizedBox(width: 8),
-                  Text(
-                    selectedDate != null ? DateFormat('dd/MM/yyyy').format(selectedDate!) : 'Selecione uma data',
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.edit_calendar, color: Colors.blue),
-                    onPressed: () async {
-                      final pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: selectedDate!,
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime.now(),
-                      );
-                      if (pickedDate != null) {
-                        selectedDate = pickedDate;
-                      }
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancelar'),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4CAF50),
-                foregroundColor: const Color(0xFFFFFFFF),
-              ),
-              onPressed: () {
-                final updatedFood = Food(
-                  id: food.id,
-                  name: _nameController.text,
-                  calories: int.tryParse(_caloriesController.text) ?? 0,
-                  consumedAt: selectedDate ?? DateTime.now(),
-                );
-                Navigator.of(context).pop(updatedFood);
-              },
-              child: const Text('Salvar'),
             ),
           ],
         );

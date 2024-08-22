@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../enums/result_type_enum.dart';
 import '../../providers/exercice_provider.dart';
-import '../widgets/exercice_list_item.dart';
+import '../widgets/lists/exercice_list_item.dart';
 import '../widgets/calories_displayer.dart';
 import '../widgets/forms/exercice_form_item.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/goal_provider.dart';
-import '../widgets/goal_list_item.dart';
+import '../widgets/lists/goal_list_item.dart';
 import '../widgets/forms/goal_form_item.dart';
 
 class GoalScreen extends ConsumerWidget {
