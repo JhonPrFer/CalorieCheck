@@ -29,6 +29,12 @@ class ExerciceNotifier extends StateNotifier<List<Exercice>> {
     await _saveExercices();
   }
 
+  Future<void> editExercice(Exercice editedExercice) async {
+    state = state.map((exercice) => exercice.id == editedExercice.id ? editedExercice : exercice).toList()
+      ..sort((a, b) => b.executedAt.compareTo(a.executedAt));
+    await _saveExercices();
+  }
+
   void removeExercice(int id) async {
     state = state.where((exercice) => exercice.id != id).toList();
     await _saveExercices();

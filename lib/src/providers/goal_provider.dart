@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/goal.dart';
 import '../models/food.dart';
-import 'food_provider.dart'; // Certifique-se de importar o foodProvider
+import 'food_provider.dart';
 
 final goalProvider = StateNotifierProvider<GoalNotifier, List<Goal>>((ref) => GoalNotifier(ref));
 
@@ -15,8 +15,8 @@ class GoalNotifier extends StateNotifier<List<Goal>> {
   }
 
   Future<void> _loadGoalsAndUpdateStatus() async {
-    await _loadGoals(); // Carregar as metas
-    _updateGoalsStatus(); // Atualizar o status das metas com base nos alimentos
+    await _loadGoals();
+    _updateGoalsStatus();
   }
 
   Future<void> _loadGoals() async {
@@ -33,7 +33,6 @@ class GoalNotifier extends StateNotifier<List<Goal>> {
   void _updateGoalsStatus() {
     final foods = ref.read(foodProvider);
 
-    // Para cada meta, verificar se foi atingida
     state = state.map((goal) {
       final totalCalories = _calculateCaloriesForGoal(goal, foods);
       if (totalCalories >= goal.target) {
@@ -43,7 +42,7 @@ class GoalNotifier extends StateNotifier<List<Goal>> {
       }
     }).toList();
 
-    _saveToPreferences(); // Salva o estado atualizado
+    _saveGoals();
   }
 
   int _calculateCaloriesForGoal(Goal goal, List<Food> foods) {
@@ -56,22 +55,22 @@ class GoalNotifier extends StateNotifier<List<Goal>> {
   Future<void> addGoal(Goal goal) async {
     state = [...state, goal]..sort((a, b) => a.startsAt.compareTo(b.startsAt));
     _updateGoalsStatus();
-    await _saveToPreferences();
+    await _saveGoals();
   }
 
   Future<void> editGoal(Goal editedGoal) async {
     state = state.map((goal) => goal.id == editedGoal.id ? editedGoal : goal).toList()
       ..sort((a, b) => a.startsAt.compareTo(b.startsAt));
     _updateGoalsStatus();
-    await _saveToPreferences();
+    await _saveGoals();
   }
 
   Future<void> removeGoal(int id) async {
     state = state.where((goal) => goal.id != id).toList();
-    await _saveToPreferences();
+    await _saveGoals();
   }
 
-  Future<void> _saveToPreferences() async {
+  Future<void> _saveGoals() async {
     final prefs = await SharedPreferences.getInstance();
     final String goalsString = json.encode(state.map((goal) => goal.toMap()).toList());
     await prefs.setString('goals', goalsString);

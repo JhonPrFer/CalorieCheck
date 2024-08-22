@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../models/exercice.dart';
 import '../../providers/exercice_provider.dart';
+import '../widgets/forms/exercice_form_item.dart';
 
 class ExerciceListItem extends ConsumerWidget {
   final Exercice exercice;
@@ -36,12 +37,7 @@ class ExerciceListItem extends ConsumerWidget {
               final shouldDelete = await _confirmDeletion(context);
               return shouldDelete ?? false;
             } else if (direction == DismissDirection.startToEnd) {
-              final updatedExercice = await _showEditExerciceDialog(context, exercice);
-              if (updatedExercice != null) {
-                ref.read(exerciceProvider.notifier).removeExercice(exercice.id);
-                ref.read(exerciceProvider.notifier).addExercice(updatedExercice);
-              }
-              return false;
+              showExerciceDialog(context, ref, exercice: exercice);
             }
             return false;
           },
@@ -123,84 +119,6 @@ class ExerciceListItem extends ConsumerWidget {
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<Exercice?> _showEditExerciceDialog(BuildContext context, Exercice exercice) async {
-    final _nameController = TextEditingController(text: exercice.name);
-    final _caloriesController = TextEditingController(text: exercice.calories.toString());
-    DateTime? selectedDate = exercice.executedAt;
-
-    return showDialog<Exercice>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Editar Exercício'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Nome'),
-              ),
-              TextField(
-                controller: _caloriesController,
-                decoration: const InputDecoration(labelText: 'Calorias Ganhas'),
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  const Icon(Icons.calendar_today),
-                  const SizedBox(width: 8),
-                  Text(
-                    selectedDate != null ? DateFormat('dd/MM/yyyy').format(selectedDate!) : 'Selecione uma data',
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.edit_calendar, color: Colors.blue),
-                    onPressed: () async {
-                      final pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: selectedDate!,
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime.now(),
-                      );
-                      if (pickedDate != null) {
-                        selectedDate = pickedDate;
-                      }
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancelar'),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4CAF50),
-                foregroundColor: const Color(0xFFFFFFFF),
-              ),
-              onPressed: () {
-                final updatedExercice = Exercice(
-                  id: exercice.id,
-                  name: _nameController.text,
-                  calories: int.tryParse(_caloriesController.text) ?? 0,
-                  executedAt: selectedDate ?? DateTime.now(),
-                );
-                Navigator.of(context).pop(updatedExercice);
-              },
-              child: const Text('Salvar'),
             ),
           ],
         );
