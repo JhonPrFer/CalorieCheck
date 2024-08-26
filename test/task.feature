@@ -80,7 +80,7 @@ Feature: Calorie Goal Management
     Given the app is running
     	And I have not set a daily calorie goal
     When I navigate to the home page
-    Then the page should display a button labeled {“Criar Meta de Calorias"}
+    Then the page should display a button labeled {"Criar Meta de Calorias"}
     When I click on the {"Criar Meta de Calorias"} button
       And I set the daily calorie goal to {"2500 calorias"}
     Then my daily calorie goal should be set to {"2500 calorias"}
@@ -98,15 +98,15 @@ Feature: Weekly report
   Scenario: Functional report
     Given the app is running
       And I have registered calories in the last 7 days
-    When I open the {“report”} tab
+    When I open the {"report"} tab
     Then the days I have registered calories should show the total number given
       And I should see a comparison of the consumed calories and the planned calories in the report
 
   Scenario: Empty days
   Given the app is running
-  When I open the {“report”} tab 
+  When I open the {"report"} tab 
     And I haven’t registered calories in a previous day
-  Then this day should show {“0 calories”} text
+  Then this day should show {"0 calories"} text
 
 Feature: Edit list items
 
@@ -141,8 +141,8 @@ Feature: Remove item confirmed
       And the meal {'arroz'} is in the list
     When I click on {"arroz"} and click trash icon 
     Then I should see {"confirma deleção?"} 
-      And I click on the {“no”} button
-      And is shown a list with {“arroz”} in it
+      And I click on the {"no"} button
+      And is shown a list with {"arroz"} in it
 
   Feature: Offline app
     Scenario: see app offline
