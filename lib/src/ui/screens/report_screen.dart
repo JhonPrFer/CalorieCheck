@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,9 +47,9 @@ class ReportScreen extends ConsumerWidget {
             const SizedBox(height: 20),
             _buildPieChart(totalGoals, achievedGoals),
             const SizedBox(height: 20),
-            _buildBarChart('Calorias Consumidas nos Últimos 7 Dias', last7DaysCaloriesConsumed),
+            _buildBarChart('Calorias consumidas nos últimos 7 dias', last7DaysCaloriesConsumed),
             const SizedBox(height: 20),
-            _buildBarChart('Calorias Gastas nos Últimos 7 Dias', last7DaysCaloriesBurned),
+            _buildBarChart('Calorias gastas nos últimos 7 dias', last7DaysCaloriesBurned),
           ],
         ),
       ),
@@ -117,6 +119,38 @@ class ReportScreen extends ConsumerWidget {
   }
 
   Widget _buildBarChart(String title, List<int> data) {
+    final allZeroes = data.every((value) => value == 0);
+
+    if (allZeroes) {
+      data = List.generate(7, (index) => 0);
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Sem dados para exibir',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final maxData = data.isNotEmpty ? data.reduce((a, b) => a > b ? a : b) : 1;
+    final interval = allZeroes ? 1.0 : (maxData / 4).clamp(1, double.infinity).toDouble();
+
+    log('allZeroes: $allZeroes');
+    log('maxData: $maxData');
+    log('message: $interval');
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -180,9 +214,7 @@ class ReportScreen extends ConsumerWidget {
                   gridData: FlGridData(
                     show: true, // Exibe as linhas da grade
                     drawVerticalLine: true,
-                    horizontalInterval: data.isEmpty || data.reduce((a, b) => a > b ? a : b) == 0
-                        ? 1
-                        : data.reduce((a, b) => a > b ? a : b) / 4, // Espaçamento da grid horizontal
+                    horizontalInterval: interval,
                   ),
                 ),
               ),
