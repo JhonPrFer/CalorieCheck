@@ -1,9 +1,11 @@
+import 'dart:convert';
+
 import 'package:CalorieCheck/src/models/water.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 
-final waterProvider = StateNotifierProvider<WaterNotifier, List<Water>>((ref) => WaterNotifier());
+final waterProvider =
+    StateNotifierProvider<WaterNotifier, List<Water>>((ref) => WaterNotifier());
 
 class WaterNotifier extends StateNotifier<List<Water>> {
   WaterNotifier() : super([]) {
@@ -16,7 +18,8 @@ class WaterNotifier extends StateNotifier<List<Water>> {
 
     if (waterString != null) {
       final List<dynamic> waterList = jsonDecode(waterString);
-      state = waterList.map((item) => Water.fromMap(item)).toList()..sort((a, b) => b.consumedAt.compareTo(a.consumedAt));
+      state = waterList.map((item) => Water.fromMap(item)).toList()
+        ..sort((a, b) => b.consumedAt.compareTo(a.consumedAt));
     }
   }
 
@@ -29,7 +32,9 @@ class WaterNotifier extends StateNotifier<List<Water>> {
   }
 
   Future<void> editWater(Water editedWater) async {
-    state = state.map((water) => water.id == editedWater.id ? editedWater : water).toList()
+    state = state
+        .map((water) => water.id == editedWater.id ? editedWater : water)
+        .toList()
       ..sort((a, b) => b.consumedAt.compareTo(a.consumedAt));
     await _saveWater();
   }

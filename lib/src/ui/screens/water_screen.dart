@@ -1,19 +1,19 @@
+import 'package:CalorieCheck/src/providers/water_provider.dart';
 import 'package:CalorieCheck/src/ui/widgets/displayers/water_displayer.dart';
+import 'package:CalorieCheck/src/ui/widgets/forms/water_form_item.dart';
+import 'package:CalorieCheck/src/ui/widgets/lists/water_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../enums/result_type_enum.dart';
-import '../../providers/food_provider.dart';
-import '../widgets/forms/food_form_item.dart';
-import '../widgets/lists/food_list_item.dart';
 
 class WaterScreen extends ConsumerWidget {
   const WaterScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final foods = ref.watch(foodProvider);
-    final totalWater = ref.read(foodProvider.notifier).getTodayCalories();
+    final waters = ref.watch(waterProvider);
+    final totalWater = ref.read(waterProvider.notifier).getTodayLiter();
 
     return Scaffold(
       appBar: AppBar(
@@ -27,7 +27,7 @@ class WaterScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.add),
             color: Colors.white,
-            onPressed: () => showFoodDialog(context, ref),
+            onPressed: () => showWaterDialog(context, ref),
           ),
         ],
       ),
@@ -42,12 +42,13 @@ class WaterScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: foods.isEmpty
-                  ? const Center(child: Text('Nenhuma água adicionado.'))
+              child: waters.isEmpty
+                  ? const Center(
+                      child: Text('Nenhuma quantidade de água adicionada.'))
                   : ListView.builder(
-                      itemCount: foods.length,
+                      itemCount: waters.length,
                       itemBuilder: (context, index) {
-                        return FoodListItem(food: foods[index]);
+                        return WaterListItem(water: waters[index]);
                       },
                     ),
             ),

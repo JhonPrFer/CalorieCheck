@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../models/food.dart';
-import '../../../providers/food_provider.dart';
-
 void showWaterDialog(BuildContext context, WidgetRef ref, {Water? water}) {
   showDialog(
     context: context,
@@ -57,7 +54,7 @@ class _WaterDialogState extends ConsumerState<WaterDialog> {
       if (_isEditing) {
         ref.read(waterProvider.notifier).editWater(water);
       } else {
-        ref.read(waterProvider.notifier).editWater(water);
+        ref.read(waterProvider.notifier).addWater(water);
       }
       Navigator.pop(context);
     }
@@ -66,7 +63,7 @@ class _WaterDialogState extends ConsumerState<WaterDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(_isEditing ? 'Editar Alimento' : 'Novo Alimento'),
+      title: Text(_isEditing ? 'Editar Água' : 'Nova Água'),
       content: Form(
         key: _formKey,
         child: Column(
@@ -74,32 +71,17 @@ class _WaterDialogState extends ConsumerState<WaterDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFormField(
-              decoration: const InputDecoration(labelText: 'Nome/Descrição'),
-              initialValue: _name,
-              keyboardType: TextInputType.text,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor, insira um nome ou descrição.';
-                }
-                return null;
-              },
-              onSaved: (value) {
-                _name = value!;
-              },
-            ),
-            TextFormField(
               decoration:
-                  const InputDecoration(labelText: 'Quantidade de Calorias'),
-              initialValue: _calories.toString(),
+                  const InputDecoration(labelText: 'Quantidade de litros'),
               keyboardType: TextInputType.number,
               validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor, insira uma quantidade de calorias.';
+                if (value == null || value.isEmpty || int.parse(value) <= 0) {
+                  return 'Por favor, insira uma quantidade de litros.';
                 }
                 return null;
               },
               onSaved: (value) {
-                _calories = int.parse(value!);
+                _quantity = int.parse(value!);
               },
             ),
             const SizedBox(height: 16),
@@ -141,7 +123,7 @@ class _WaterDialogState extends ConsumerState<WaterDialog> {
           child: const Text('Cancelar'),
         ),
         ElevatedButton(
-          onPressed: _saveFood,
+          onPressed: _saveWater,
           child: const Text('Salvar'),
         ),
       ],
