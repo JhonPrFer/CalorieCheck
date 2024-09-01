@@ -23,16 +23,13 @@ class ReportScreen extends ConsumerWidget {
     final goalNotifier = ref.watch(goalProvider);
     final waterNotifier = ref.watch(waterProvider);
 
-    final todayCaloriesConsumed =
-        ref.read(foodProvider.notifier).getTodayCalories();
-    final todayCaloriesBurned =
-        ref.read(exerciceProvider.notifier).getTodayCalories();
+    final todayCaloriesConsumed = ref.read(foodProvider.notifier).getTodayCalories();
+    final todayCaloriesBurned = ref.read(exerciceProvider.notifier).getTodayCalories();
 
     final balance = todayCaloriesConsumed - todayCaloriesBurned;
 
     final totalGoals = goalNotifier.length;
-    final achievedGoals =
-        goalNotifier.where((goal) => goal.achieved ?? false).length;
+    final achievedGoals = goalNotifier.where((goal) => goal.achieved ?? false).length;
 
     final last7DaysCaloriesConsumed = _getLast7DaysCalories(foodNotifier);
     final last7DaysCaloriesBurned = _getLast7DaysCalories(exerciceNotifier);
@@ -42,8 +39,7 @@ class ReportScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text(
           'Relatórios',
-          style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 24, color: Colors.white),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Colors.white),
         ),
         backgroundColor: const Color(0xFF4CAF50),
       ),
@@ -56,14 +52,11 @@ class ReportScreen extends ConsumerWidget {
             const SizedBox(height: 20),
             _buildPieChart(totalGoals, achievedGoals),
             const SizedBox(height: 20),
-            _buildBarChart('Calorias consumidas nos últimos 7 dias',
-                last7DaysCaloriesConsumed),
+            _buildBarChart('Calorias consumidas nos últimos 7 dias', last7DaysCaloriesConsumed),
             const SizedBox(height: 20),
-            _buildBarChart(
-                'Calorias gastas nos últimos 7 dias', last7DaysCaloriesBurned),
+            _buildBarChart('Calorias gastas nos últimos 7 dias', last7DaysCaloriesBurned),
             const SizedBox(height: 20),
-            _buildBarChart(
-                'Água consumida nos últimos 7 dias', last7DaysWaterConsumed),
+            _buildBarChart('Água consumida nos últimos 7 dias', last7DaysWaterConsumed),
           ],
         ),
       ),
@@ -72,9 +65,7 @@ class ReportScreen extends ConsumerWidget {
 
   Widget _buildBalanceCard(int balance) {
     return Card(
-      color: balance >= 0
-          ? const Color.fromARGB(255, 32, 214, 126)
-          : Colors.redAccent,
+      color: balance >= 0 ? const Color(0xFF4CAF50) : const Color(0xFFFF5252),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -97,6 +88,27 @@ class ReportScreen extends ConsumerWidget {
   Widget _buildPieChart(int totalGoals, int achievedGoals) {
     final notAchievedGoals = totalGoals - achievedGoals;
 
+    if (totalGoals == 0) {
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const Text(
+                'Metas',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Sem metas por enquanto',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -114,12 +126,12 @@ class ReportScreen extends ConsumerWidget {
                   sections: [
                     PieChartSectionData(
                       value: achievedGoals.toDouble(),
-                      color: Colors.green,
+                      color: const Color(0xFF4CAF50),
                       title: 'Alcançadas ($achievedGoals)',
                     ),
                     PieChartSectionData(
                       value: (totalGoals - achievedGoals).toDouble(),
-                      color: Colors.red,
+                      color: const Color(0xFFFF5252),
                       title: 'Não alcançadas (${notAchievedGoals})',
                     ),
                   ],
@@ -147,12 +159,11 @@ class ReportScreen extends ConsumerWidget {
             children: [
               Text(
                 title,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
               const Text(
-                'Sem dados para exibir',
+                'Sem dados por enquanto',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
             ],
@@ -162,8 +173,7 @@ class ReportScreen extends ConsumerWidget {
     }
 
     final maxData = data.isNotEmpty ? data.reduce((a, b) => a > b ? a : b) : 1;
-    final interval =
-        allZeroes ? 1.0 : (maxData / 4).clamp(1, double.infinity).toDouble();
+    final interval = allZeroes ? 1.0 : (maxData / 4).clamp(1, double.infinity).toDouble();
 
     log('allZeroes: $allZeroes');
     log('maxData: $maxData');
@@ -188,16 +198,14 @@ class ReportScreen extends ConsumerWidget {
                   barGroups: _generateBarGroups(data),
                   borderData: FlBorderData(show: false),
                   titlesData: FlTitlesData(
-                    topTitles:
-                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
                         reservedSize: 28,
                         interval: data.isEmpty
                             ? 1
-                            : data.reduce((a, b) => a > b ? a : b) /
-                                4, // Ajuste do intervalo conforme os dados
+                            : data.reduce((a, b) => a > b ? a : b) / 4, // Ajuste do intervalo conforme os dados
                         getTitlesWidget: (value, meta) {
                           return Text(
                             value.toInt().toString(),
@@ -209,15 +217,13 @@ class ReportScreen extends ConsumerWidget {
                         },
                       ),
                     ),
-                    rightTitles:
-                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
                         reservedSize: 28,
                         getTitlesWidget: (value, meta) {
-                          final date = DateTime.now()
-                              .subtract(Duration(days: 6 - value.toInt()));
+                          final date = DateTime.now().subtract(Duration(days: 6 - value.toInt()));
                           final dayFormat = DateFormat('dd/MM');
                           return SideTitleWidget(
                             axisSide: meta.axisSide,
@@ -278,9 +284,7 @@ class ReportScreen extends ConsumerWidget {
         } else {
           throw Exception('Unsupported type');
         }
-        return date.year == day.year &&
-            date.month == day.month &&
-            date.day == day.day;
+        return date.year == day.year && date.month == day.month && date.day == day.day;
       }).fold<int>(0, (sum, item) {
         if (item is Food) {
           return sum + item.calories;
@@ -292,8 +296,6 @@ class ReportScreen extends ConsumerWidget {
           throw Exception('Unsupported type');
         }
       });
-    })
-        .reversed
-        .toList(); // Revertendo para mostrar do mais antigo ao mais recente
+    }).reversed.toList(); // Revertendo para mostrar do mais antigo ao mais recente
   }
 }
