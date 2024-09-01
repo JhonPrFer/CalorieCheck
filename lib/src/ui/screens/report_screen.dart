@@ -1,11 +1,16 @@
-import 'package:intl/intl.dart';
+import 'dart:developer';
+
+import 'package:CalorieCheck/src/models/water.dart';
+import 'package:CalorieCheck/src/providers/water_provider.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fl_chart/fl_chart.dart';
-import '../../models/food.dart';
+import 'package:intl/intl.dart';
+
 import '../../models/exercice.dart';
-import '../../providers/food_provider.dart';
+import '../../models/food.dart';
 import '../../providers/exercice_provider.dart';
+import '../../providers/food_provider.dart';
 import '../../providers/goal_provider.dart';
 
 class ReportScreen extends ConsumerWidget {
@@ -16,23 +21,29 @@ class ReportScreen extends ConsumerWidget {
     final foodNotifier = ref.watch(foodProvider);
     final exerciceNotifier = ref.watch(exerciceProvider);
     final goalNotifier = ref.watch(goalProvider);
+    final waterNotifier = ref.watch(waterProvider);
 
-    final todayCaloriesConsumed = ref.read(foodProvider.notifier).getTodayCalories();
-    final todayCaloriesBurned = ref.read(exerciceProvider.notifier).getTodayCalories();
+    final todayCaloriesConsumed =
+        ref.read(foodProvider.notifier).getTodayCalories();
+    final todayCaloriesBurned =
+        ref.read(exerciceProvider.notifier).getTodayCalories();
 
     final balance = todayCaloriesConsumed - todayCaloriesBurned;
 
     final totalGoals = goalNotifier.length;
-    final achievedGoals = goalNotifier.where((goal) => goal.achieved ?? false).length;
+    final achievedGoals =
+        goalNotifier.where((goal) => goal.achieved ?? false).length;
 
     final last7DaysCaloriesConsumed = _getLast7DaysCalories(foodNotifier);
     final last7DaysCaloriesBurned = _getLast7DaysCalories(exerciceNotifier);
+    final last7DaysWaterConsumed = _getLast7DaysCalories(waterNotifier);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           'Relatórios',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Colors.white),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 24, color: Colors.white),
         ),
         backgroundColor: const Color(0xFF4CAF50),
       ),
@@ -45,9 +56,14 @@ class ReportScreen extends ConsumerWidget {
             const SizedBox(height: 20),
             _buildPieChart(totalGoals, achievedGoals),
             const SizedBox(height: 20),
-            _buildBarChart('Calorias Consumidas nos Últimos 7 Dias', last7DaysCaloriesConsumed),
+            _buildBarChart('Calorias consumidas nos últimos 7 dias',
+                last7DaysCaloriesConsumed),
             const SizedBox(height: 20),
-            _buildBarChart('Calorias Gastas nos Últimos 7 Dias', last7DaysCaloriesBurned),
+            _buildBarChart(
+                'Calorias gastas nos últimos 7 dias', last7DaysCaloriesBurned),
+            const SizedBox(height: 20),
+            _buildBarChart(
+                'Água consumida nos últimos 7 dias', last7DaysWaterConsumed),
           ],
         ),
       ),
@@ -56,7 +72,9 @@ class ReportScreen extends ConsumerWidget {
 
   Widget _buildBalanceCard(int balance) {
     return Card(
-      color: balance >= 0 ? const Color.fromARGB(255, 32, 214, 126) : Colors.redAccent,
+      color: balance >= 0
+          ? const Color.fromARGB(255, 32, 214, 126)
+          : Colors.redAccent,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -117,6 +135,40 @@ class ReportScreen extends ConsumerWidget {
   }
 
   Widget _buildBarChart(String title, List<int> data) {
+    final allZeroes = data.every((value) => value == 0);
+
+    if (allZeroes) {
+      data = List.generate(7, (index) => 0);
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Sem dados para exibir',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final maxData = data.isNotEmpty ? data.reduce((a, b) => a > b ? a : b) : 1;
+    final interval =
+        allZeroes ? 1.0 : (maxData / 4).clamp(1, double.infinity).toDouble();
+
+    log('allZeroes: $allZeroes');
+    log('maxData: $maxData');
+    log('message: $interval');
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -136,14 +188,16 @@ class ReportScreen extends ConsumerWidget {
                   barGroups: _generateBarGroups(data),
                   borderData: FlBorderData(show: false),
                   titlesData: FlTitlesData(
-                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles:
+                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
                         reservedSize: 28,
                         interval: data.isEmpty
                             ? 1
-                            : data.reduce((a, b) => a > b ? a : b) / 4, // Ajuste do intervalo conforme os dados
+                            : data.reduce((a, b) => a > b ? a : b) /
+                                4, // Ajuste do intervalo conforme os dados
                         getTitlesWidget: (value, meta) {
                           return Text(
                             value.toInt().toString(),
@@ -155,13 +209,15 @@ class ReportScreen extends ConsumerWidget {
                         },
                       ),
                     ),
-                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles:
+                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
                         reservedSize: 28,
                         getTitlesWidget: (value, meta) {
-                          final date = DateTime.now().subtract(Duration(days: 6 - value.toInt()));
+                          final date = DateTime.now()
+                              .subtract(Duration(days: 6 - value.toInt()));
                           final dayFormat = DateFormat('dd/MM');
                           return SideTitleWidget(
                             axisSide: meta.axisSide,
@@ -180,9 +236,7 @@ class ReportScreen extends ConsumerWidget {
                   gridData: FlGridData(
                     show: true, // Exibe as linhas da grade
                     drawVerticalLine: true,
-                    horizontalInterval: data.isEmpty || data.reduce((a, b) => a > b ? a : b) == 0
-                        ? 1
-                        : data.reduce((a, b) => a > b ? a : b) / 4, // Espaçamento da grid horizontal
+                    horizontalInterval: interval,
                   ),
                 ),
               ),
@@ -219,19 +273,27 @@ class ReportScreen extends ConsumerWidget {
           date = item.consumedAt;
         } else if (item is Exercice) {
           date = item.executedAt;
+        } else if (item is Water) {
+          date = item.consumedAt;
         } else {
           throw Exception('Unsupported type');
         }
-        return date.year == day.year && date.month == day.month && date.day == day.day;
+        return date.year == day.year &&
+            date.month == day.month &&
+            date.day == day.day;
       }).fold<int>(0, (sum, item) {
         if (item is Food) {
           return sum + item.calories;
+        } else if (item is Water) {
+          return sum + item.quantity;
         } else if (item is Exercice) {
           return sum + item.calories;
         } else {
           throw Exception('Unsupported type');
         }
       });
-    }).reversed.toList(); // Revertendo para mostrar do mais antigo ao mais recente
+    })
+        .reversed
+        .toList(); // Revertendo para mostrar do mais antigo ao mais recente
   }
 }

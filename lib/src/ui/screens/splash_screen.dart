@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'login_screen.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -7,7 +8,7 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Simula um atraso de 3 segundos antes de navegar para a tela de login
-    Future.delayed(const Duration(seconds: 0), () {
+    Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const LoginScreen()),
