@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../../../enums/result_type_enum.dart';
 
-class CaloriesDisplay extends StatelessWidget {
-  final int totalCalories;
+class WaterDisplay extends StatelessWidget {
+  final int totalWater;
   final ResultTypeEnum type;
 
-  const CaloriesDisplay({
+  const WaterDisplay({
     Key? key,
-    required this.totalCalories,
+    required this.totalWater,
     required this.type,
   }) : super(key: key);
 
@@ -23,7 +23,7 @@ class CaloriesDisplay extends StatelessWidget {
           shape: BoxShape.circle,
           border: Border.all(
             color: type == ResultTypeEnum.gain
-                ? const Color(0xFF4CAF50)
+                ? Colors.blueAccent
                 : const Color.fromARGB(255, 233, 30, 23),
             width: 4,
           ),
@@ -57,12 +57,12 @@ class CaloriesDisplay extends StatelessWidget {
             const SizedBox(height: 8),
             FittedBox(
               child: Text(
-                '${type == ResultTypeEnum.gain ? '+' : '-'}$totalCalories kcal',
+                '${type == ResultTypeEnum.gain ? '+' : '-'}$totalWater litros',
                 style: TextStyle(
                   fontSize: 34,
                   fontWeight: FontWeight.w800,
                   color: type == ResultTypeEnum.gain
-                      ? const Color(0xFF4CAF50)
+                      ? Colors.blueAccent
                       : const Color.fromARGB(255, 233, 30, 23),
                   shadows: const [
                     Shadow(

@@ -1,8 +1,10 @@
+import 'package:CalorieCheck/src/ui/screens/water_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../providers/bottom_nav_provider.dart'; // Importação do StateNotifier
-import 'food_screen.dart';
 import 'exercice_screen.dart';
+import 'food_screen.dart';
 import 'goal_screen.dart';
 import 'report_screen.dart';
 
@@ -11,8 +13,10 @@ class MainScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedIndex = ref.watch(bottomNavProvider); // Observa o índice selecionado
-    final navNotifier = ref.read(bottomNavProvider.notifier); // Referência para o StateNotifier
+    final selectedIndex =
+        ref.watch(bottomNavProvider); // Observa o índice selecionado
+    final navNotifier =
+        ref.read(bottomNavProvider.notifier); // Referência para o StateNotifier
 
     Widget content;
     switch (selectedIndex) {
@@ -20,12 +24,15 @@ class MainScreen extends ConsumerWidget {
         content = const FoodScreen();
         break;
       case 1:
-        content = const ExerciceScreen();
+        content = const WaterScreen();
         break;
       case 2:
-        content = const GoalScreen();
+        content = const ExerciceScreen();
         break;
       case 3:
+        content = const GoalScreen();
+        break;
+      case 4:
         content = const ReportScreen();
         break;
       default:
@@ -35,7 +42,8 @@ class MainScreen extends ConsumerWidget {
     return Scaffold(
       body: content,
       bottomNavigationBar: BottomNavigationBar(
-        onTap: (index) => navNotifier.updateIndex(index), // Atualiza o índice selecionado
+        onTap: (index) =>
+            navNotifier.updateIndex(index), // Atualiza o índice selecionado
         currentIndex: selectedIndex,
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
@@ -46,6 +54,10 @@ class MainScreen extends ConsumerWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.fastfood),
             label: 'Alimentos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.water_drop_outlined),
+            label: 'Água',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.fitness_center),
